@@ -1,8 +1,19 @@
 #!/bin/sh
 
-source ./.env
-npm run load
-if [ -z ${HUBOT_ACRO_PRIVATE_FILE} ];
-    then echo "Hubot's private acronym json file location is not set as 'HUBOT_ACRO_PRIVATE_FILE'";
-    else curl -o node_modules/hubot-acrogov/src/json/acro.priv.json $HUBOT_ACRO_PRIVATE_FILE;
+ENV_FILE="./.env"
+ENV_PRIVATE_FILE="./.env_private"
+
+if [ -f "$ENV_FILE" ]; then
+   source $ENV_FILE
 fi
+
+if [ -n "$HUBOT_ENV_LOCATION" ]; then
+  curl -O $HUBOT_ENV_LOCATION
+  source $ENV_FILE
+fi
+
+if [ -f "$ENV_PRIVATE_FILE" ]; then
+   source $ENV_PRIVATE_FILE
+fi
+
+./bin/hubot --adapter matteruser --alias $MATTERMOST_HUBOT_USERNAME,.,please,bot,uhh,uhhh
